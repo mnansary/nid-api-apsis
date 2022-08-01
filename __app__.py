@@ -1,27 +1,34 @@
+#-*- coding: utf-8 -*-
+"""
+@author:MD.Nazmuddoha Ansary
+"""
 from __future__ import print_function
-from scipy.misc import face
 import os
+import pathlib
+import base64
+from datetime import datetime
+
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
 import cv2
-import pathlib
-from datetime import datetime
-from flask import Flask,request,jsonify
-from flask_restful import Resource, Api, reqparse
+# Flask utils
+from flask import Flask,request, render_template,jsonify
 from werkzeug.utils import secure_filename
 from time import time
 from pprint import pprint
 # models
 from coreLib.ocr import OCR
-# initialize ocr
+# Define a flask app
+app = Flask(__name__,static_folder="nidstatic")
 # initialize ocr
 ocr=OCR()
 
+def convert_and_save(b64_string,file_path):
+    with open(file_path, "wb") as fh:
+        fh.write(base64.decodebytes(b64_string.encode()))
 
-app = Flask(__name__)
-api = Api(app)
-
-parser = reqparse.RequestParser()
-parser.add_argument('name')
+@app.route('/', methods=['GET'])
+def index():
+    return render_template('index.html')
 
 
 def handle_cardface(face):
@@ -75,17 +82,16 @@ def update_log(logs):
         for k in logs.keys():
             log.write(f"{k}:\t{logs[k]}\n")
         log.write("----------------------------------------------\n")
-
-
-
-class GetFile(Resource):
-    def get(self):
-        return {'test': 'this is test'}	
         
-    def post(self):
+
+
+@app.route('/nid', methods=['GET', 'POST'])
+def upload():
+    if request.method == 'POST':
         try:
             # container
             logs={}
+            time_stamp=datetime.now().strftime("%m_%d_%Y,_%H_%M_%S")
             logs["req-time"] = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
             
             req_start=time()
@@ -227,10 +233,8 @@ class GetFile(Resource):
         except Exception as e:
              return jsonify({"error":consttruct_error("","INTERNAL_SERVER_ERROR","500","","please try again with a different image")})
     
-        
+    return jsonify({"error":consttruct_error("","INTERNAL_SERVER_ERROR","500","","please try again with a different image")})
 
-
-api.add_resource(GetFile, '/nid')
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=2088)
+    app.run(debug=False,host="0.0.0.0",port=2088)
