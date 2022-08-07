@@ -144,8 +144,6 @@ class GetFile(Resource):
             
             
             logs["file-save-time"]=round(time()-save_start,2)
-            logs["card-face"]=face
-            logs["params"]={"bangla":ret_bangla,"rotation-fix":exec_rot}
             
             try:
                 img=cv2.imread(file_path)
@@ -208,10 +206,11 @@ class GetFile(Resource):
             data["data"]=ocr_out
             logs["req-handling-time"]=round(time()-req_start,2)
             
-            update_log(logs)
             
             res={"nid":data["data"]["nid-basic-info"]["nid"],
                     "dob":data["data"]["nid-basic-info"]["dob"]}
+            logs["res"]=res
+            update_log(logs)
             return jsonify(res)
     
         except Exception as e:
