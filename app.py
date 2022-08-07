@@ -86,6 +86,7 @@ class GetFile(Resource):
         try:
             # container
             logs={}
+            time_stamp=datetime.now().strftime("%m_%d_%Y,_%H_%M_%S")
             logs["req-time"] = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
             
             req_start=time()
@@ -128,19 +129,9 @@ class GetFile(Resource):
                 if "file" in request.files:
                     # Get the file from post request
                     f = request.files['file']
-                    file_path = os.path.join(basepath,"tests",secure_filename(f.filename))
-                    # save file
-                    file_ext=pathlib.Path(file_path).suffix
-                    if file_ext not in [".jpg",".png",".jpeg"]:
-                        logs["error"]=f"received file-extension:{file_ext}"
-                        update_log(logs)
-                        return jsonify({"error":consttruct_error("image format not valid.",
-                                                                "INVALID_IMAGE","400",
-                                                                f"received file-extension:{file_ext}",
-                                                                "Please send .png image files")})
-                    
+                    file_path = os.path.join(basepath,"tests",f"upload_{time_stamp}.jpg")
                     f.save(file_path)
-                    logs["file-name"]=secure_filename(f.filename)    
+                    logs["file-name"]=f"upload_{time_stamp}.jpg"    
             except Exception as ef:
                 logs["error"]="nidimage not received"
                 update_log(logs)
@@ -218,8 +209,7 @@ class GetFile(Resource):
             logs["req-handling-time"]=round(time()-req_start,2)
             
             update_log(logs)
-            os.remove(file_path)
-
+            
             res={"nid":data["data"]["nid-basic-info"]["nid"],
                     "dob":data["data"]["nid-basic-info"]["dob"]}
             return jsonify(res)
@@ -233,4 +223,4 @@ class GetFile(Resource):
 api.add_resource(GetFile, '/nid')
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=2088)
+    app.run(debug=False, host='0.0.0.0', port=2088)
