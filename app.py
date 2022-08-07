@@ -71,10 +71,9 @@ def consttruct_error(msg,etype,msg_code,details,suggestion=""):
 
 def update_log(logs):
     with open("logs.log","a+") as log:
-        log.write("..............................................\n")
         for k in logs.keys():
-            log.write(f"{k}:\t{logs[k]}\n")
-        log.write("----------------------------------------------\n")
+            log.write(f"{k}:\t{logs[k]}\t")
+        log.write("\n")
 
 
 
@@ -86,10 +85,8 @@ class GetFile(Resource):
         try:
             # container
             logs={}
-            time_stamp=datetime.now().strftime("%m_%d_%Y,_%H_%M_%S")
-            logs["req-time"] = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
+            time_stamp=datetime.now().strftime("%m_%d_%Y_%H_%M_%S")
             
-            req_start=time()
             # handle card face
             face=handle_cardface(request.args.get("cardface"))
             if face =="invalid":
@@ -124,7 +121,6 @@ class GetFile(Resource):
                                                             "valid executes:rotation-fix") })
                 
             try:
-                save_start=time()
                 basepath = os.path.dirname(__file__)
                 if "file" in request.files:
                     # Get the file from post request
@@ -143,7 +139,6 @@ class GetFile(Resource):
                 
             
             
-            logs["file-save-time"]=round(time()-save_start,2)
             
             try:
                 img=cv2.imread(file_path)
@@ -158,10 +153,7 @@ class GetFile(Resource):
             
                 
             
-            proc_start=time()
             ocr_out=ocr(file_path,face,ret_bangla,exec_rot)
-            logs["ocr-processing-time"]=round(time()-proc_start,2)
-            
             if ocr_out =="loc-error":
                 logs["error"]="key fields cant be clearly located"
                 update_log(logs)
@@ -204,8 +196,6 @@ class GetFile(Resource):
             
             data={}
             data["data"]=ocr_out
-            logs["req-handling-time"]=round(time()-req_start,2)
-            
             
             res={"nid":data["data"]["nid-basic-info"]["nid"],
                     "dob":data["data"]["nid-basic-info"]["dob"]}
