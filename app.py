@@ -199,7 +199,8 @@ class GetFile(Resource):
             data["data"]=ocr_out
             
             res={"nid":data["data"]["nid-basic-info"]["nid"],
-                    "dob":data["data"]["nid-basic-info"]["dob"]}
+                 "dob":data["data"]["nid-basic-info"]["dob"],
+                "success":data["data"]["nid-basic-info"]["success"]}
             logs["res"]=res
             update_log(logs)
             return jsonify(res)
