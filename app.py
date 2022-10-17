@@ -96,7 +96,8 @@ class GetFile(Resource):
                                                             "INVALID_PARAMETER",
                                                             "400",
                                                             f'received cardface:{request.args.get("cardface")}',
-                                                            "valid cardface:front,back")}) 
+                                                            "valid cardface:front,back"),
+                                "success":"false"}) 
 
             # handle includes
             ret_bangla=handle_includes(request.args.get("includes"))
@@ -107,7 +108,7 @@ class GetFile(Resource):
                                                             "INVALID_PARAMETER",
                                                             "400",
                                                             f'received includes:{request.args.get("includes")}',
-                                                            "valid includes: bangla")})
+                                                            "valid includes: bangla"),"success":"false"})
 
             # handle executes
             exec_rot=handle_execs(request.args.get("executes"))
@@ -118,7 +119,7 @@ class GetFile(Resource):
                                                             "INVALID_PARAMETER",
                                                             "400",
                                                             f'received executes:{request.args.get("executes")}',
-                                                            "valid executes:rotation-fix") })
+                                                            "valid executes:rotation-fix"),"success":"false" })
                 
             try:
                 basepath = os.path.dirname(__file__)
@@ -135,7 +136,7 @@ class GetFile(Resource):
                                                             "INVALID_PARAMETER",
                                                             "400",
                                                             "",
-                                                            "Please send image as form data")})
+                                                            "Please send image as form data"),"success":"false"})
                 
             
             
@@ -149,7 +150,7 @@ class GetFile(Resource):
                                                             "INVALID_IMAGE",
                                                             "400",
                                                             "",
-                                                            "Please send uncorrupted image files")})
+                                                            "Please send uncorrupted image files"),"success":"false"})
             
                 
             
@@ -160,14 +161,14 @@ class GetFile(Resource):
                 return jsonify({"error":consttruct_error("image is problematic",
                                                             "INVALID_IMAGE","400",
                                                             "key fields cant be clearly located",
-                                                            "please try again with a clear nid image")})
+                                                            "please try again with a clear nid image"),"success":"false"})
             elif "coverage-error#" in ocr_out:
                 logs["error"]=f"Text region coverage:{ocr_out.replace('coverage-error#','')}, which is lower than 30%"
                 update_log(logs)
                 return jsonify({"error":consttruct_error("image is problematic",
                                                             "INVALID_IMAGE","400",
                                                             f"Text region coverage:{ocr_out.replace('coverage-error#','')}, which is lower than 30%",
-                                                            "please try again with a clear nid image")})
+                                                            "please try again with a clear nid image"),"success":"false"})
 
             elif ocr_out=="text-region-missing":
                 logs["error"]="No text region found. Probably not an nid image."
@@ -175,7 +176,7 @@ class GetFile(Resource):
                 return jsonify({"error":consttruct_error("image is problematic",
                                                             "INVALID_IMAGE","400",
                                                             "No text region found. Probably not an nid image.",
-                                                            "please try again with a clear nid image")})
+                                                            "please try again with a clear nid image"),"success":"false"})
 
             elif ocr_out=="no-fields":
                 logs["error"]="No key-fields are detected."
@@ -183,7 +184,7 @@ class GetFile(Resource):
                 return jsonify({"error":consttruct_error("image is problematic",
                                                             "INVALID_IMAGE","400",
                                                             "No key-fields are detected.",
-                                                            "please try again with a clear nid image")})
+                                                            "please try again with a clear nid image"),"success":"false"})
 
             elif ocr_out=="addr-not-located":
                 logs["error"]="address cant be located properly"
@@ -191,7 +192,7 @@ class GetFile(Resource):
                 return jsonify({"error":consttruct_error("image is problematic",
                                                             "INVALID_IMAGE","400",
                                                             "address cant be located properly",
-                                                            "please try again with a clear nid image")})
+                                                            "please try again with a clear nid image"),"success":"false"})
             
             
             data={}
@@ -204,7 +205,7 @@ class GetFile(Resource):
             return jsonify(res)
     
         except Exception as e:
-             return jsonify({"error":consttruct_error("","INTERNAL_SERVER_ERROR","500","","please try again with a different image")})
+             return jsonify({"error":consttruct_error("","INTERNAL_SERVER_ERROR","500","","please try again with a different image"),"success":"false"})
     
         
 

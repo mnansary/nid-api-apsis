@@ -199,13 +199,16 @@ class OCR(object):
         
         basic["en-name"]=en_name
         basic["nid"]=processNID(idx) 
-        basic["dob"]=processDob(dob) 
+        basic["dob"]=processDob(dob)
+        basic["success"]="true" 
 
         if basic["nid"] is None:
             basic["nid"]="nid data not found. try agian with different image"
+            basic["success"]="false"
                 
         if basic["dob"] is None:
             basic["dob"]="dob data not found.try again with different image"
+            basic["success"]="false"
         return basic 
     
     def get_bangla_info(self,box_dict,crops):
