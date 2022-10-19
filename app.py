@@ -203,6 +203,7 @@ class GetFile(Resource):
                 "success":data["data"]["nid-basic-info"]["success"]}
             logs["res"]=res
             update_log(logs)
+            os.remove(file_path)
             return jsonify(res)
     
         except Exception as e:
