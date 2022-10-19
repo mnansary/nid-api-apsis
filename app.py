@@ -206,7 +206,7 @@ class GetFile(Resource):
             return jsonify(res)
     
         except Exception as e:
-             return jsonify({"error":consttruct_error("","INTERNAL_SERVER_ERROR","500","","please try again with a different image"),"success":"false"})
+             return jsonify({"error":consttruct_error("","NETWORK LOAD EXCEDDED","500","","image not received"),"success":"false"})
     
         
 
