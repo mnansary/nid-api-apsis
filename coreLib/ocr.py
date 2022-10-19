@@ -41,8 +41,8 @@ class OCR(object):
         
         if not os.path.exists(bnocr_onnx):
             download(bnocr_gid,bnocr_onnx)
-        self.bnocr=BanglaOCR(bnocr_onnx)
-        LOG_INFO("Loaded Bangla Model")        
+        # self.bnocr=BanglaOCR(bnocr_onnx)
+        # LOG_INFO("Loaded Bangla Model")        
         
         self.base=PaddleOCR(use_angle_cls=True, lang='en',rec_algorithm='SVTR_LCNet',use_gpu=True)
         self.det=Detector()
