@@ -203,41 +203,18 @@ class YOLO(object):
                 img=cv2.rectangle(img,(x1,y1),(x2,y2),(255,255,0),thickness=5)
         return img
 
-    def check_ename(self,locs):
-        if locs["ename"] is None:
-            if locs["bname"] is not None and locs["fname"] is not None:
-                x1b,y1b,x2b,y2b=locs["bname"]
-                x1f,y1f,x2f,y2f=locs["fname"]
-                
-                x1e=min(x1b,x1f)
-                x2e=max(x2b,x2f)
-                ymid=y2b+(y1f-y2b)//2
-                h2=(y2b-y1b)//2
-                y1e=ymid-h2 
-                y2e=ymid+h2
-                locs["ename"]=[x1e,y1e,x2e,y2e]
-                return locs
-            else:
-                return locs
-        else:
-            return locs
-
+    
 
 
 
     def check_rois(self,clss,locs):
         found=True
-        founds=[]
-        if "ename" in clss:
-            locs=self.check_ename(locs)
             
         for cls in clss:
             if locs[cls] is None:
                 found=False
-                return found,founds
-            else:
-                founds.append(cls)
-        return found,founds
+                return found
+        return found
 
     def __call__(self,img,clss,debug=False):
         '''
@@ -255,13 +232,13 @@ class YOLO(object):
                 plt.imshow(viz)
                 plt.show()
 
-            _found,founds=self.check_rois(clss,locs)
+            _found=self.check_rois(clss,locs)
             if _found:
                 img=np.copy(data)
                 found=True
                 break
         
         if found:
-            return img,locs,founds
+            return img,locs
         else:
-            return None,None,founds
+            return None,None
