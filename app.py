@@ -43,60 +43,60 @@ class GetFile(Resource):
         return {'test': 'this is test'}	
         
     def post(self):
-        #try:
-        # container
-        logs={}
-        time_stamp=datetime.now().strftime("%m_%d_%Y_%H_%M_%S")
-        
         try:
-            basepath = os.path.dirname(__file__)
-            if "file" in request.files:
-                # Get the file from post request
-                f = request.files['file']
-                file_path = os.path.join(basepath,"tests",f"upload_{time_stamp}.jpg")
-                f.save(file_path)
-                logs["file-name"]=f"upload_{time_stamp}.jpg"    
-        except Exception as ef:
-            logs["error"]="nidimage not received"
-            update_log(logs)
-            return jsonify({"error":consttruct_error("nidimage not received",
-                                                        "INVALID_PARAMETER",
-                                                        "400",
-                                                        "",
-                                                        "Please send image as form data"),"success":"false"})
+            # container
+            logs={}
+            time_stamp=datetime.now().strftime("%m_%d_%Y_%H_%M_%S")
             
-        
-        
-        
-        try:
-            img=cv2.imread(file_path)
-        except Exception as er:
-            logs["error"]="image not readable."
-            update_log(logs)
-            return jsonify({"error":consttruct_error("image not readable.",
-                                                        "INVALID_IMAGE",
-                                                        "400",
-                                                        "",
-                                                        "Please send uncorrupted image files"),"success":"false"})
-        
+            try:
+                basepath = os.path.dirname(__file__)
+                if "file" in request.files:
+                    # Get the file from post request
+                    f = request.files['file']
+                    file_path = os.path.join(basepath,"tests",f"upload_{time_stamp}.jpg")
+                    f.save(file_path)
+                    logs["file-name"]=f"upload_{time_stamp}.jpg"    
+            except Exception as ef:
+                logs["error"]="nidimage not received"
+                update_log(logs)
+                return jsonify({"error":consttruct_error("nidimage not received",
+                                                            "INVALID_PARAMETER",
+                                                            "400",
+                                                            "",
+                                                            "Please send image as form data"),"success":"false"})
+                
             
-        
-        ocr_out=ocr(file_path)
-        if ocr_out =="error":
-            logs["error"]="key fields cant be clearly located"
+            
+            
+            try:
+                img=cv2.imread(file_path)
+            except Exception as er:
+                logs["error"]="image not readable."
+                update_log(logs)
+                return jsonify({"error":consttruct_error("image not readable.",
+                                                            "INVALID_IMAGE",
+                                                            "400",
+                                                            "",
+                                                            "Please send uncorrupted image files"),"success":"false"})
+            
+                
+            
+            ocr_out=ocr(file_path)
+            if ocr_out =="error":
+                logs["error"]="key fields cant be clearly located"
+                update_log(logs)
+                return jsonify({"error":consttruct_error("image is problematic",
+                                                        "INVALID_IMAGE","400",
+                                                        "key fields cant be clearly located",
+                                                        "please try again with a clear nid image"),"success":"false"})
+            
+            logs["res"]=ocr_out
             update_log(logs)
-            return jsonify({"error":consttruct_error("image is problematic",
-                                                    "INVALID_IMAGE","400",
-                                                    "key fields cant be clearly located",
-                                                    "please try again with a clear nid image"),"success":"false"})
-        
-        logs["res"]=ocr_out
-        update_log(logs)
-        os.remove(file_path)
-        return jsonify(ocr_out)
+            os.remove(file_path)
+            return jsonify(ocr_out)
 
-        # except Exception as e:
-        #      return jsonify({"error":consttruct_error("","NETWORK/SERVER ERROR","500","",""),"success":"false"})
+        except Exception as e:
+             return jsonify({"error":consttruct_error("","NETWORK/SERVER ERROR","500","",""),"success":"false"})
     
         
 
