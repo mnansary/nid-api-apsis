@@ -92,7 +92,6 @@ class GetFile(Resource):
             
             logs["res"]=ocr_out
             update_log(logs)
-            os.remove(file_path)
             return jsonify(ocr_out)
 
         except Exception as e:
