@@ -93,7 +93,7 @@ class GetFile(Resource):
             
             logs["res"]=ocr_out
             end=time()
-            logs["time"]=end-start
+            logs["time"]=round(end-start,2)
             update_log(logs)
             return jsonify(ocr_out)
 
@@ -106,4 +106,4 @@ class GetFile(Resource):
 api.add_resource(GetFile, '/nid')
 
 if __name__ == '__main__':
-    app.run(debug=False, host='0.0.0.0', port=2088,threaded=True)
+    app.run(debug=False, host='0.0.0.0', port=2088)
