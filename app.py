@@ -2,6 +2,7 @@ from __future__ import print_function
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
 import cv2
+from time import time
 import pathlib
 from datetime import datetime
 from flask import Flask,request,jsonify
@@ -47,7 +48,7 @@ class GetFile(Resource):
             # container
             logs={}
             time_stamp=datetime.now().strftime("%m_%d_%Y_%H_%M_%S")
-            
+            start=time()
             try:
                 basepath = os.path.dirname(__file__)
                 if "file" in request.files:
@@ -91,6 +92,8 @@ class GetFile(Resource):
                                                         "please try again with a clear nid image"),"success":"false"})
             
             logs["res"]=ocr_out
+            end=time()
+            logs["time"]=end-start
             update_log(logs)
             return jsonify(ocr_out)
 
