@@ -11,7 +11,8 @@ from flask_restful import Resource, Api, reqparse
 from coreLib.ocr import OCR
 # initialize ocr
 # initialize ocr
-ocr=OCR()
+basepath = os.path.dirname(__file__)
+ocr=OCR(yolo_onnx=os.path.join(basepath,"weights/yolo.onnx"))
 
 
 app = Flask(__name__)
