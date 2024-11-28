@@ -132,3 +132,4 @@ debug.ipynb
 data/*
 .vscode/*
 unstable/*
+tests/*
